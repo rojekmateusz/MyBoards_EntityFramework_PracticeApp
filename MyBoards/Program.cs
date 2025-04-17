@@ -41,8 +41,7 @@ namespace MyBoards
                 var user1 = new User()
                 {
                     Email = "user1@test.com",
-                    FirtsName = "User",
-                    LastName = "One",
+                    FullName = "User One",
                     Address = new Address()
                     {
                         Country = "Polska",
@@ -55,8 +54,7 @@ namespace MyBoards
                 var user2 = new User()
                 {
                     Email = "user2@test.com",
-                    FirtsName = "User",
-                    LastName = "Two",
+                    FullName = "User Two",
                     Address = new Address()
                     {
                         Country = "Polska",
