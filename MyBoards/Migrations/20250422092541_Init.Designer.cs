@@ -12,8 +12,8 @@ using MyBoards.Entities;
 namespace MyBoards.Migrations
 {
     [DbContext(typeof(MyBoardsContext))]
-    [Migration("20250417093853_FirstLastToFullName")]
-    partial class FirstLastToFullName
+    [Migration("20250422092541_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,22 +178,22 @@ namespace MyBoards.Migrations
 
                     b.Property<string>("IterationPath")
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Iternation_Path");
+                        .HasColumnName("Iteration_Path");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<int>("TagId")
+                    b.Property<int>("StateId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WorkItemStateId")
+                    b.Property<int?>("TagId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("WorkItemStateId");
+                    b.HasIndex("StateId");
 
                     b.ToTable("WorkItems");
 
@@ -204,45 +204,45 @@ namespace MyBoards.Migrations
 
             modelBuilder.Entity("MyBoards.Entities.WorkItemState", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("StateId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StateId"));
 
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("StateId");
 
                     b.ToTable("WorkItemStates");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            StateId = 1,
                             State = "To Do"
                         },
                         new
                         {
-                            Id = 2,
+                            StateId = 2,
                             State = "Doing"
                         },
                         new
                         {
-                            Id = 3,
+                            StateId = 3,
                             State = "Done"
                         },
                         new
                         {
-                            Id = 4,
+                            StateId = 4,
                             State = "On Hold"
                         },
                         new
                         {
-                            Id = 5,
+                            StateId = 5,
                             State = "Rejected"
                         });
                 });
@@ -255,7 +255,7 @@ namespace MyBoards.Migrations
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("PublicateDate")
+                    b.Property<DateTime>("PublicationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getutcdate()");
@@ -271,12 +271,12 @@ namespace MyBoards.Migrations
                 {
                     b.HasBaseType("MyBoards.Entities.WorkItem");
 
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("EndDate")
                         .HasPrecision(3)
                         .HasColumnType("datetime2(3)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("Epic");
                 });
@@ -346,7 +346,7 @@ namespace MyBoards.Migrations
 
                     b.HasOne("MyBoards.Entities.WorkItemState", "WorkItemstate")
                         .WithMany()
-                        .HasForeignKey("WorkItemStateId")
+                        .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

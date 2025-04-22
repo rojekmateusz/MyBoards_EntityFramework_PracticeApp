@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace MyBoards.Migrations
 {
     /// <inheritdoc />
@@ -30,8 +32,7 @@ namespace MyBoards.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirtsName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -43,13 +44,13 @@ namespace MyBoards.Migrations
                 name: "WorkItemStates",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    StateId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkItemStates", x => x.Id);
+                    table.PrimaryKey("PK_WorkItemStates", x => x.StateId);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,13 +82,13 @@ namespace MyBoards.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Area = table.Column<string>(type: "varchar(200)", nullable: true),
-                    Iternation_Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Iteration_Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagId = table.Column<int>(type: "int", nullable: false),
-                    WorkItemStateId = table.Column<int>(type: "int", nullable: false),
+                    TagId = table.Column<int>(type: "int", nullable: true),
+                    StateId = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2(3)", precision: 3, nullable: true),
                     Efford = table.Column<decimal>(type: "decimal(5,2)", nullable: true),
                     Activity = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -103,10 +104,10 @@ namespace MyBoards.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WorkItems_WorkItemStates_WorkItemStateId",
-                        column: x => x.WorkItemStateId,
+                        name: "FK_WorkItems_WorkItemStates_StateId",
+                        column: x => x.StateId,
                         principalTable: "WorkItemStates",
-                        principalColumn: "Id",
+                        principalColumn: "StateId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -144,7 +145,7 @@ namespace MyBoards.Migrations
                 {
                     WorkItemId = table.Column<int>(type: "int", nullable: false),
                     TagId = table.Column<int>(type: "int", nullable: false),
-                    PublicateDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()")
+                    PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()")
                 },
                 constraints: table =>
                 {
@@ -161,6 +162,30 @@ namespace MyBoards.Migrations
                         principalTable: "WorkItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tags",
+                columns: new[] { "Id", "Value", "WorkItemId" },
+                values: new object[,]
+                {
+                    { 1, "Web", 0 },
+                    { 2, "UI", 0 },
+                    { 3, "Desktop", 0 },
+                    { 4, "API", 0 },
+                    { 5, "Service", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "WorkItemStates",
+                columns: new[] { "StateId", "State" },
+                values: new object[,]
+                {
+                    { 1, "To Do" },
+                    { 2, "Doing" },
+                    { 3, "Done" },
+                    { 4, "On Hold" },
+                    { 5, "Rejected" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -185,9 +210,9 @@ namespace MyBoards.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkItems_WorkItemStateId",
+                name: "IX_WorkItems_StateId",
                 table: "WorkItems",
-                column: "WorkItemStateId");
+                column: "StateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkItemTag_TagId",

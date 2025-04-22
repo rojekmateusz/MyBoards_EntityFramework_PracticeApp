@@ -8,5 +8,5 @@ public class WorkItemTag
     public int TagId { get; set; }
     public Tag Tag { get; set; }
     
-    public DateTime PublicateDate { get; set; }
+    public DateTime PublicationDate { get; set; }
 }

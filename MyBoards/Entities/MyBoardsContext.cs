@@ -6,22 +6,22 @@ namespace MyBoards.Entities
     {
         public MyBoardsContext(DbContextOptions<MyBoardsContext> options) : base(options) { }
 
-        DbSet<Address> Addresses { get; set; }
-        DbSet<Comment> Comments { get; set; }
-        DbSet<WorkItem> WorkItems { get; set; }
-        DbSet<Issue> Issues { get; set; }
-        DbSet<Epic> Epics { get; set; }
-        DbSet<Task> Tasks { get; set; }
-        DbSet<Tag> Tags { get; set; }
-        DbSet<User> Users { get; set; }
-        DbSet<WorkItemState> WorkItemStates { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<WorkItem> WorkItems { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+        public DbSet<Epic> Epics { get; set; }
+        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<WorkItemState> WorkItemStates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<WorkItem>(eb =>
             {
                 eb.Property(a => a.Area).HasColumnType("varchar(200)");
-                eb.Property(a => a.IterationPath).HasColumnName("Iternation_Path");
+                eb.Property(a => a.IterationPath).HasColumnName("Iteration_Path");
                 eb.HasMany(c => c.Comments).WithOne(wi => wi.WorkItem).HasForeignKey(c => c.WorkItemId);
                 eb.HasOne(a => a.Author).WithMany(u => u.WorkItems).HasForeignKey(a => a.AuthorId);
 
@@ -37,11 +37,11 @@ namespace MyBoards.Entities
                     wit =>
                     {
                         wit.HasKey(wit => new { wit.WorkItemId, wit.TagId });
-                        wit.Property(wit => wit.PublicateDate).HasDefaultValueSql("getutcdate()");
+                        wit.Property(wit => wit.PublicationDate).HasDefaultValueSql("getutcdate()");
                     }
                     );
 
-                eb.HasOne(wi => wi.WorkItemstate).WithMany().HasForeignKey(wi => wi.WorkItemStateId);
+                eb.HasOne(wi => wi.WorkItemstate).WithMany().HasForeignKey(wi => wi.StateId);
             });
 
             modelBuilder.Entity<Epic>()
@@ -58,6 +58,7 @@ namespace MyBoards.Entities
 
             modelBuilder.Entity<WorkItemState>(eb =>
             {
+                eb.HasKey(e => e.StateId);
                 eb.Property(e => e.State).IsRequired();
                 eb.Property(e => e.State).HasMaxLength(50);
             });
@@ -79,11 +80,11 @@ namespace MyBoards.Entities
 
             modelBuilder.Entity<WorkItemState>()
                 .HasData(
-                new WorkItemState() { Id = 1, State = "To Do" },
-                new WorkItemState() { Id = 2, State = "Doing" },
-                new WorkItemState() { Id = 3, State = "Done" },
-                new WorkItemState() { Id = 4, State = "On Hold" },
-                new WorkItemState() { Id = 5, State = "Rejected" });
+                new WorkItemState() { StateId = 1, State = "To Do" },
+                new WorkItemState() { StateId = 2, State = "Doing" },
+                new WorkItemState() { StateId = 3, State = "Done" },
+                new WorkItemState() { StateId = 4, State = "On Hold" },
+                new WorkItemState() { StateId = 5, State = "Rejected" });
 
             modelBuilder.Entity<Tag>()
                 .HasData(

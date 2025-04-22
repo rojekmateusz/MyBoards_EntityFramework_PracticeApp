@@ -12,16 +12,16 @@ public abstract class WorkItem
     public User Author { get; set; }
     public Guid AuthorId { get; set; }
 
-    public int TagId { get; set; }
+    public int? TagId { get; set; }
     public List<Tag> Tags { get; set; }
 
-    public int WorkItemStateId { get; set; }
+    public int StateId { get; set; }
     public WorkItemState WorkItemstate { get; set; }
 }
 
 public class Epic : WorkItem
 {
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 }
 
