@@ -16,6 +16,8 @@ namespace MyBoards.Entities
         public DbSet<User> Users { get; set; }
         public DbSet<WorkItemState> WorkItemStates { get; set; }
 
+        public DbSet<WorkItemTag> WorkItemTag { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<WorkItem>(eb =>
